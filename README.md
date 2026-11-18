@@ -21,7 +21,7 @@ This repo contains a **practical checklist** for these cases and a **free n8n wo
 
 1. n8n → *Settings → n8n API* → create an API key.
 2. Import `workflows/silent-failure-watchdog.json` (*Workflows → Import from file*).
-3. Create a **Header Auth** credential (`X-N8N-API-KEY` = your key) and select it in both *Get* nodes.
+3. Create a **Header Auth** credential (`X-N8N-API-KEY` = your key) and select it in all three *Get* nodes.
 4. In the **Config** node set `baseUrl`, `notifyWebhookUrl` (Slack/Discord/Teams incoming webhook) and, recommended, `heartbeatUrl` (healthchecks.io or Uptime Kuma push monitor).
 5. Activate.
 
@@ -30,6 +30,10 @@ This repo contains a **practical checklist** for these cases and a **free n8n wo
 - Schedule rules with cron expressions are skipped (interval-based rules only).
 - "Silent schedule" needs at least one past automatic run to compare against.
 - It runs inside n8n – that's why the external heartbeat matters.
+- Keep "Save successful production executions" on for scheduled workflows. Otherwise there are no runs to compare against and you get false "silent" alerts.
+- Running executions are fetched with a separate request (`status=running`), because the default executions list leaves them out.
+
+Tested on n8n 2.48.5 (Docker) with a failing schedule, a hanging webhook execution and a silent schedule.
 
 ## Want this as tickets instead of chat pings?
 

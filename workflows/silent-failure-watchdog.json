@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## Silent Failure Watchdog\nCatches what the Error Trigger can't:\n- **Failed** executions in the last check window\n- **Stuck** executions still \"running\" after X minutes\n- **Silent schedules**: active schedule-triggered workflows that haven't run for longer than their interval allows\n\n### Setup (5 min)\n1. In n8n: *Settings → n8n API* → create an API key.\n2. Create a **Header Auth** credential: name `X-N8N-API-KEY`, value = your key. Select it in both *Get* nodes.\n3. Open **Config** and set `baseUrl` (e.g. `https://n8n.example.com`), `stuckMinutes`, `notifyWebhookUrl` (Slack/Discord/Teams incoming webhook) and optional `heartbeatUrl`.\n4. Activate.\n\n### Important\nThis watchdog runs **inside** n8n. If n8n itself goes down, it goes quiet too. Set `heartbeatUrl` to an external dead-man's-switch (e.g. healthchecks.io or a self-hosted Uptime Kuma push monitor) so you get alerted when the pings stop.",
+        "content": "## Silent Failure Watchdog\nCatches what the Error Trigger can't:\n- **Failed** executions in the last check window\n- **Stuck** executions still \"running\" after X minutes\n- **Silent schedules**: active schedule-triggered workflows that haven't run for longer than their interval allows\n\n### Setup (5 min)\n1. In n8n: *Settings → n8n API* → create an API key.\n2. Create a **Header Auth** credential: name `X-N8N-API-KEY`, value = your key. Select it in all three *Get* nodes.\n3. Open **Config** and set `baseUrl` (e.g. `https://n8n.example.com`), `stuckMinutes`, `notifyWebhookUrl` (Slack/Discord/Teams incoming webhook) and optional `heartbeatUrl`.\n4. Activate.\n\n### Important\nThis watchdog runs **inside** n8n. If n8n itself goes down, it goes quiet too. Set `heartbeatUrl` to an external dead-man's-switch (e.g. healthchecks.io or a self-hosted Uptime Kuma push monitor) so you get alerted when the pings stop.",
         "height": 520,
         "width": 420
       },
@@ -11,28 +11,71 @@
       "name": "Read me",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [-520, -120]
+      "position": [
+        -520,
+        -120
+      ]
     },
     {
       "parameters": {
-        "rule": { "interval": [ { "field": "minutes", "minutesInterval": 15 } ] }
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
       },
       "id": "b1f0a1d2-0002-4c3a-9a10-000000000002",
       "name": "Every 15 minutes",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [0, 0]
+      "position": [
+        0,
+        0
+      ]
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
-            { "id": "c1", "name": "baseUrl", "value": "https://n8n.example.com", "type": "string" },
-            { "id": "c2", "name": "windowMinutes", "value": 15, "type": "number" },
-            { "id": "c3", "name": "stuckMinutes", "value": 60, "type": "number" },
-            { "id": "c4", "name": "graceFactor", "value": 1.5, "type": "number" },
-            { "id": "c5", "name": "notifyWebhookUrl", "value": "", "type": "string" },
-            { "id": "c6", "name": "heartbeatUrl", "value": "", "type": "string" }
+            {
+              "id": "c1",
+              "name": "baseUrl",
+              "value": "https://n8n.example.com",
+              "type": "string"
+            },
+            {
+              "id": "c2",
+              "name": "windowMinutes",
+              "value": 15,
+              "type": "number"
+            },
+            {
+              "id": "c3",
+              "name": "stuckMinutes",
+              "value": 60,
+              "type": "number"
+            },
+            {
+              "id": "c4",
+              "name": "graceFactor",
+              "value": 1.5,
+              "type": "number"
+            },
+            {
+              "id": "c5",
+              "name": "notifyWebhookUrl",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "c6",
+              "name": "heartbeatUrl",
+              "value": "",
+              "type": "string"
+            }
           ]
         },
         "options": {}
@@ -41,7 +84,10 @@
       "name": "Config",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [220, 0]
+      "position": [
+        220,
+        0
+      ]
     },
     {
       "parameters": {
@@ -49,14 +95,28 @@
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendQuery": true,
-        "queryParameters": { "parameters": [ { "name": "active", "value": "true" }, { "name": "limit", "value": "250" } ] },
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "active",
+              "value": "true"
+            },
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
         "options": {}
       },
       "id": "b1f0a1d2-0004-4c3a-9a10-000000000004",
       "name": "Get active workflows",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [440, 0]
+      "position": [
+        440,
+        0
+      ]
     },
     {
       "parameters": {
@@ -64,30 +124,86 @@
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendQuery": true,
-        "queryParameters": { "parameters": [ { "name": "limit", "value": "250" } ] },
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
         "options": {}
       },
       "id": "b1f0a1d2-0005-4c3a-9a10-000000000005",
       "name": "Get recent executions",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [660, 0]
+      "position": [
+        660,
+        0
+      ]
     },
     {
       "parameters": {
-        "jsCode": "// Analyse workflows + executions and build one actionable finding per problem.\nconst cfg = $('Config').first().json;\nconst workflows = $('Get active workflows').first().json.data || [];\nconst executions = $('Get recent executions').first().json.data || [];\nconst now = Date.now();\nconst min = 60 * 1000;\nconst findings = [];\nconst byWf = {};\nfor (const e of executions) { (byWf[e.workflowId] = byWf[e.workflowId] || []).push(e); }\nconst name = (id) => (workflows.find(w => String(w.id) === String(id)) || {}).name || `Workflow ${id}`;\nconst link = (e) => `${cfg.baseUrl}/workflow/${e.workflowId}/executions/${e.id}`;\n\n// 1) Failed executions inside the window\nfor (const e of executions) {\n  const t = Date.parse(e.stoppedAt || e.startedAt);\n  if ((e.status === 'error' || e.status === 'crashed') && now - t <= cfg.windowMinutes * min) {\n    findings.push({ kind: 'failed', workflow: name(e.workflowId),\n      what: `Execution ${e.id} ended with status \"${e.status}\".`,\n      next: `Open the execution, fix the failing node, then re-run it to backfill.`, url: link(e) });\n  }\n}\n\n// 2) Stuck executions (still running too long)\nfor (const e of executions) {\n  if ((e.status === 'running' || (!e.finished && !e.stoppedAt)) && now - Date.parse(e.startedAt) > cfg.stuckMinutes * min) {\n    findings.push({ kind: 'stuck', workflow: name(e.workflowId),\n      what: `Execution ${e.id} has been running for ${Math.round((now - Date.parse(e.startedAt)) / min)} min (limit ${cfg.stuckMinutes}).`,\n      next: `Check worker/main logs (OOM or restart?). Stop the execution and re-run if needed.`, url: link(e) });\n  }\n}\n\n// 3) Silent schedules: expected interval from the Schedule Trigger rule\nconst unitMs = { seconds: 1000, minutes: min, hours: 60 * min, days: 1440 * min, weeks: 10080 * min, months: 43200 * min };\nfor (const w of workflows) {\n  const trig = (w.nodes || []).find(n => n.type === 'n8n-nodes-base.scheduleTrigger' && !n.disabled);\n  if (!trig) continue;\n  const rules = (trig.parameters && trig.parameters.rule && trig.parameters.rule.interval) || [];\n  let expected = null;\n  for (const r of rules) {\n    const field = r.field || 'days';\n    const every = r[`${field}Interval`] || 1;\n    const ms = (unitMs[field] || unitMs.days) * every;\n    expected = expected === null ? ms : Math.min(expected, ms);\n  }\n  if (!expected) continue; // cron expressions etc. are skipped\n  const runs = (byWf[w.id] || []).filter(e => e.mode === 'trigger');\n  const last = runs.reduce((m, e) => Math.max(m, Date.parse(e.startedAt)), 0);\n  const silentFor = last ? now - last : null;\n  if (silentFor !== null && silentFor > expected * cfg.graceFactor) {\n    findings.push({ kind: 'silent', workflow: w.name,\n      what: `Schedule is active but the last automatic run was ${Math.round(silentFor / min)} min ago (expected every ${Math.round(expected / min)} min). No error was raised.`,\n      next: `Deactivate and re-activate the workflow to re-register the trigger; check credentials used by the first node; check instance restarts.`, url: `${cfg.baseUrl}/workflow/${w.id}` });\n  }\n}\n\nreturn [{ json: { count: findings.length, findings } }];"
+        "url": "={{ $('Config').item.json.baseUrl }}/api/v1/executions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "running"
+            },
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1f0a1d2-0010-4c3a-9a10-000000000010",
+      "name": "Get running executions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Analyse workflows + executions and build one actionable finding per problem.\nconst cfg = $('Config').first().json;\nconst workflows = $('Get active workflows').first().json.data || [];\nconst recent = $('Get recent executions').first().json.data || [];\n// The executions list leaves out running executions by default, so they are fetched separately.\nconst running = $('Get running executions').first().json.data || [];\nconst seen = new Set();\nconst executions = [...recent, ...running].filter(e => !seen.has(e.id) && seen.add(e.id));\nconst now = Date.now();\nconst min = 60 * 1000;\nconst findings = [];\nconst byWf = {};\nfor (const e of executions) { (byWf[e.workflowId] = byWf[e.workflowId] || []).push(e); }\nconst name = (id) => (workflows.find(w => String(w.id) === String(id)) || {}).name || `Workflow ${id}`;\nconst link = (e) => `${cfg.baseUrl}/workflow/${e.workflowId}/executions/${e.id}`;\n\n// 1) Failed executions inside the window, grouped per workflow (one finding, newest execution linked)\nconst failed = {};\nfor (const e of executions) {\n  const t = Date.parse(e.stoppedAt || e.startedAt);\n  if ((e.status === 'error' || e.status === 'crashed') && now - t <= cfg.windowMinutes * min) {\n    (failed[e.workflowId] = failed[e.workflowId] || []).push(e);\n  }\n}\nfor (const [wfId, list] of Object.entries(failed)) {\n  list.sort((a, b) => Date.parse(b.startedAt) - Date.parse(a.startedAt));\n  const latest = list[0];\n  findings.push({ kind: 'failed', workflow: name(wfId),\n    what: list.length === 1\n      ? `Execution ${latest.id} ended with status \"${latest.status}\".`\n      : `${list.length} executions failed in the last ${cfg.windowMinutes} min (latest: ${latest.id}, status \"${latest.status}\").`,\n    next: `Open the latest execution, fix the failing node, then re-run the failed executions to backfill.`, url: link(latest) });\n}\n\n// 2) Stuck executions (still running too long)\nfor (const e of executions) {\n  if (e.status === 'running' && now - Date.parse(e.startedAt) > cfg.stuckMinutes * min) {\n    findings.push({ kind: 'stuck', workflow: name(e.workflowId),\n      what: `Execution ${e.id} has been running for ${Math.round((now - Date.parse(e.startedAt)) / min)} min (limit ${cfg.stuckMinutes}).`,\n      next: `Check worker/main logs (OOM or restart?). Stop the execution and re-run if needed.`, url: link(e) });\n  }\n}\n\n// 3) Silent schedules: expected interval from the Schedule Trigger rule\nconst unitMs = { seconds: 1000, minutes: min, hours: 60 * min, days: 1440 * min, weeks: 10080 * min, months: 43200 * min };\nfor (const w of workflows) {\n  const trig = (w.nodes || []).find(n => n.type === 'n8n-nodes-base.scheduleTrigger' && !n.disabled);\n  if (!trig) continue;\n  const rules = (trig.parameters && trig.parameters.rule && trig.parameters.rule.interval) || [];\n  let expected = null;\n  for (const r of rules) {\n    const field = r.field || 'days';\n    if (field === 'cronExpression') continue; // cron rules are skipped\n    const every = r[`${field}Interval`] || 1;\n    const ms = (unitMs[field] || unitMs.days) * every;\n    expected = expected === null ? ms : Math.min(expected, ms);\n  }\n  if (!expected) continue;\n  const runs = (byWf[w.id] || []).filter(e => e.mode === 'trigger');\n  const last = runs.reduce((m, e) => Math.max(m, Date.parse(e.startedAt)), 0);\n  const silentFor = last ? now - last : null;\n  if (silentFor !== null && silentFor > expected * cfg.graceFactor) {\n    findings.push({ kind: 'silent', workflow: w.name,\n      what: `Schedule is active but the last automatic run was ${Math.round(silentFor / min)} min ago (expected every ${Math.round(expected / min)} min). No error was raised.`,\n      next: `Deactivate and re-activate the workflow to re-register the trigger; check credentials used by the first node; check instance restarts.`, url: `${cfg.baseUrl}/workflow/${w.id}` });\n  }\n}\n\nreturn [{ json: { count: findings.length, findings } }];"
       },
       "id": "b1f0a1d2-0006-4c3a-9a10-000000000006",
       "name": "Find problems",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [880, 0]
+      "position": [
+        1100,
+        0
+      ]
     },
     {
       "parameters": {
         "conditions": {
-          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
-          "conditions": [ { "id": "i1", "leftValue": "={{ $json.count }}", "rightValue": 0, "operator": { "type": "number", "operation": "gt" } } ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "i1",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
           "combinator": "and"
         },
         "options": {}
@@ -96,7 +212,10 @@
       "name": "Any problems?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [1100, 0]
+      "position": [
+        1320,
+        0
+      ]
     },
     {
       "parameters": {
@@ -111,7 +230,10 @@
       "name": "Notify (Slack/Discord/Teams webhook)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1320, -100]
+      "position": [
+        1540,
+        -100
+      ]
     },
     {
       "parameters": {
@@ -122,20 +244,115 @@
       "name": "Heartbeat ping (external)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1540, 80],
+      "position": [
+        1760,
+        80
+      ],
       "onError": "continueRegularOutput"
     }
   ],
   "connections": {
-    "Every 15 minutes": { "main": [ [ { "node": "Config", "type": "main", "index": 0 } ] ] },
-    "Config": { "main": [ [ { "node": "Get active workflows", "type": "main", "index": 0 } ] ] },
-    "Get active workflows": { "main": [ [ { "node": "Get recent executions", "type": "main", "index": 0 } ] ] },
-    "Get recent executions": { "main": [ [ { "node": "Find problems", "type": "main", "index": 0 } ] ] },
-    "Find problems": { "main": [ [ { "node": "Any problems?", "type": "main", "index": 0 } ] ] },
-    "Any problems?": { "main": [ [ { "node": "Notify (Slack/Discord/Teams webhook)", "type": "main", "index": 0 } ], [ { "node": "Heartbeat ping (external)", "type": "main", "index": 0 } ] ] },
-    "Notify (Slack/Discord/Teams webhook)": { "main": [ [ { "node": "Heartbeat ping (external)", "type": "main", "index": 0 } ] ] }
+    "Every 15 minutes": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Get active workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get active workflows": {
+      "main": [
+        [
+          {
+            "node": "Get recent executions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get recent executions": {
+      "main": [
+        [
+          {
+            "node": "Get running executions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find problems": {
+      "main": [
+        [
+          {
+            "node": "Any problems?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any problems?": {
+      "main": [
+        [
+          {
+            "node": "Notify (Slack/Discord/Teams webhook)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Heartbeat ping (external)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify (Slack/Discord/Teams webhook)": {
+      "main": [
+        [
+          {
+            "node": "Heartbeat ping (external)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get running executions": {
+      "main": [
+        [
+          {
+            "node": "Find problems",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1" },
+  "settings": {
+    "executionOrder": "v1"
+  },
   "pinData": {},
-  "meta": { "templateCredsSetupCompleted": false }
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
 }
