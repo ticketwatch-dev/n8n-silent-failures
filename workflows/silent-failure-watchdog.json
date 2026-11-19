@@ -249,6 +249,70 @@
         80
       ],
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "### 1. Schedule and settings\nRuns every 15 minutes. All thresholds live in **Config**:\n- `windowMinutes`: how far back to look for failed runs (keep equal to the schedule)\n- `stuckMinutes`: when a running execution counts as stuck\n- `graceFactor`: how late a schedule may be before it counts as silent (1.5 = 50% late)",
+        "height": 420,
+        "width": 420,
+        "color": 7
+      },
+      "id": "b1f0a1d2-0011-4c3a-9a10-000000000011",
+      "name": "Step 1 - Schedule and settings",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 2. Read the n8n API\nThree requests with the same Header Auth credential:\n- active workflows (to read each schedule interval)\n- recent executions\n- running executions (fetched separately because the default list leaves them out)",
+        "height": 420,
+        "width": 640,
+        "color": 5
+      },
+      "id": "b1f0a1d2-0012-4c3a-9a10-000000000012",
+      "name": "Step 2 - Read the n8n API",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 3. Find problems\nOne Code node builds a finding per problem:\n- **failed**: grouped per workflow, links the newest execution\n- **stuck**: still running after `stuckMinutes`\n- **silent**: last automatic run older than interval x `graceFactor`",
+        "height": 420,
+        "width": 420,
+        "color": 4
+      },
+      "id": "b1f0a1d2-0013-4c3a-9a10-000000000013",
+      "name": "Step 3 - Find problems",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 4. Notify and heartbeat\nOnly if something was found: one message with what broke, next step and link to a Slack/Discord/Teams incoming webhook. Swap this node for Email, Jira, Linear or GitHub Issues if you want tickets.\n\nThe heartbeat ping runs on every check, so an external monitor notices when n8n itself is down.",
+        "height": 420,
+        "width": 440,
+        "color": 6
+      },
+      "id": "b1f0a1d2-0014-4c3a-9a10-000000000014",
+      "name": "Step 4 - Notify and heartbeat",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        -260
+      ]
     }
   ],
   "connections": {
